@@ -67,7 +67,7 @@ group by
           <rd:TypeName>System.Decimal</rd:TypeName>
         </Field>
         <Field Name="SalesPerson">
-          <Value>=Fields!FirstName.Value + " " + Fields!LastName.Value</Value>
+          <Value>=Fields!LastName.Value + ", " + Fields!FirstName.Value</Value>
         </Field>
       </Fields>
     </DataSet>
@@ -276,6 +276,7 @@ group by
                                   <Value>=Fields!LineTotal.Value</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
+                                    <Format>'$'#,0.00;('$'#,0.00)</Format>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -292,6 +293,7 @@ group by
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
                             <PaddingBottom>2pt</PaddingBottom>
+                            <rd:FormatSymbolCulture>en-US</rd:FormatSymbolCulture>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -379,6 +381,7 @@ group by
                                   <Value>=Sum(Fields!LineTotal.Value)</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
+                                    <Format>'$'#,0.00;('$'#,0.00)</Format>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -396,6 +399,7 @@ group by
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
                             <PaddingBottom>2pt</PaddingBottom>
+                            <rd:FormatSymbolCulture>en-US</rd:FormatSymbolCulture>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -626,6 +630,7 @@ group by
                       <Value>Sales By Employee</Value>
                       <Style>
                         <FontSize>36pt</FontSize>
+                        <FontWeight>Bold</FontWeight>
                         <Color>Brown</Color>
                       </Style>
                     </TextRun>
@@ -636,7 +641,7 @@ group by
               <rd:DefaultName>Textbox18</rd:DefaultName>
               <Top>0.2175in</Top>
               <Height>0.7825in</Height>
-              <Width>4.46875in</Width>
+              <Width>4.92583in</Width>
               <Style>
                 <Border>
                   <Style>None</Style>
