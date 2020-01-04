@@ -13,6 +13,7 @@
     <TargetDatasourceFolder>Data Sources</TargetDatasourceFolder>
     <TargetReportPartFolder>Report Parts</TargetReportPartFolder>
     <TargetServerURL>http://localhost/reportserver</TargetServerURL>
+    <StartItem>EmployeeDetails.rdl</StartItem>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'DebugLocal' ">
     <FullPath>DebugLocal</FullPath>
@@ -52,7 +53,7 @@
     <DataSource Include="AdventureWorksDataSource.rds" />
   </ItemGroup>
   <ItemGroup>
-    <Report Include="SalesByEmployee.rdl" />
+    <Report Include="EmployeeDetails.rdl" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Reporting Services\Microsoft.ReportingServices.MSBuilder.targets" />
 </Project>
