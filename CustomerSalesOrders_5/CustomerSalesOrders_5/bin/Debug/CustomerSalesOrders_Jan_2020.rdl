@@ -24,8 +24,13 @@
           <QueryParameter Name="@EndDate">
             <Value>=Parameters!EndDate.Value</Value>
           </QueryParameter>
+          <QueryParameter Name="@SalesPersonID">
+            <Value>=Parameters!SalesPersonID.Value</Value>
+          </QueryParameter>
         </QueryParameters>
-        <CommandText>SELECT        SOH.OrderDate, SOH.SalesOrderNumber AS 'SalesOrder', PP.Name AS 'Product', PPS.Name AS 'SubCategory', SOD.OrderQty AS Quantity, SOD.LineTotal
+        <CommandText>SELECT        SOH.OrderDate, SOH.SalesOrderNumber AS 'SalesOrder',
+DATENAME(weekday, SOH.OrderDate) 'Weekday',
+ PP.Name AS 'Product', PPS.Name AS 'SubCategory', SOD.OrderQty AS Quantity, SOD.LineTotal
 FROM            Sales.SalesOrderHeader AS SOH INNER JOIN
                          Sales.SalesPerson AS SP ON SOH.SalesPersonID = SP.BusinessEntityID INNER JOIN
                          Sales.SalesOrderDetail AS SOD ON SOH.SalesOrderID = SOD.SalesOrderID INNER JOIN
@@ -33,7 +38,7 @@ FROM            Sales.SalesOrderHeader AS SOH INNER JOIN
                          Production.ProductSubcategory AS PPS ON PP.ProductSubcategoryID = PPS.ProductSubcategoryID INNER JOIN
                          Production.ProductCategory AS PPC ON PPS.ProductCategoryID = PPC.ProductCategoryID
 WHERE        (PPC.Name = N'Clothing')
-and (SOH.OrderDate between (@StartDate) and (@EndDate))
+and (SOH.OrderDate between (@StartDate) and (@EndDate)) and (SOH.SalesPersonID In (@SalesPersonID))
 GROUP BY SOH.OrderDate, SOH.SalesOrderNumber, PP.Name, PPS.Name, SOD.OrderQty, SOD.LineTotal</CommandText>
         <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
       </Query>
@@ -44,6 +49,10 @@ GROUP BY SOH.OrderDate, SOH.SalesOrderNumber, PP.Name, PPS.Name, SOD.OrderQty, S
         </Field>
         <Field Name="SalesOrder">
           <DataField>SalesOrder</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Weekday">
+          <DataField>Weekday</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Product">
@@ -61,6 +70,50 @@ GROUP BY SOH.OrderDate, SOH.SalesOrderNumber, PP.Name, PPS.Name, SOD.OrderQty, S
         <Field Name="LineTotal">
           <DataField>LineTotal</DataField>
           <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="BusinessPersonDataSet">
+      <Query>
+        <DataSourceName>DataSource1</DataSourceName>
+        <CommandText>SELECT        SSP.BusinessEntityID, PP.FirstName, PP.LastName
+FROM            Sales.SalesPerson AS SSP INNER JOIN
+                         HumanResources.Employee AS HRE ON SSP.BusinessEntityID = HRE.BusinessEntityID INNER JOIN
+                         Person.Person AS PP ON PP.BusinessEntityID = HRE.BusinessEntityID</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="BusinessEntityID">
+          <DataField>BusinessEntityID</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="FirstName">
+          <DataField>FirstName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="LastName">
+          <DataField>LastName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="EmployeeName">
+          <Value>=Fields!FirstName.Value + ", " + Fields!LastName.Value</Value>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="WeekDayDataSet">
+      <Query>
+        <DataSourceName>DataSource1</DataSourceName>
+        <CommandText>SELECT DISTINCT DATEPART(weekday, OrderDate) AS 'WeekDayNumber', DATENAME(weekday, OrderDate) AS 'WeekDayName'
+FROM            Sales.SalesOrderHeader AS SOH
+ORDER BY 'WeekDayNumber'</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="WeekDayNumber">
+          <DataField>WeekDayNumber</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="WeekDayName">
+          <DataField>WeekDayName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
     </DataSet>
@@ -701,72 +754,29 @@ GROUP BY SOH.OrderDate, SOH.SalesOrderNumber, PP.Name, PPS.Name, SOD.OrderQty, S
                       <Value>=Fields!OrderDate.Value</Value>
                     </SortExpression>
                   </SortExpressions>
-                  <TablixHeader>
-                    <Size>1in</Size>
-                    <CellContents>
-                      <Textbox Name="OrderDate">
-                        <CanGrow>true</CanGrow>
-                        <KeepTogether>true</KeepTogether>
-                        <Paragraphs>
-                          <Paragraph>
-                            <TextRuns>
-                              <TextRun>
-                                <Value>=Fields!OrderDate.Value</Value>
-                                <Style>
-                                  <FontFamily>Arial</FontFamily>
-                                  <Format>MMMM d, yyyy</Format>
-                                </Style>
-                              </TextRun>
-                            </TextRuns>
-                            <Style />
-                          </Paragraph>
-                        </Paragraphs>
-                        <rd:DefaultName>OrderDate</rd:DefaultName>
-                        <Style>
-                          <Border>
-                            <Color>LightGrey</Color>
-                            <Style>Solid</Style>
-                          </Border>
-                          <PaddingLeft>2pt</PaddingLeft>
-                          <PaddingRight>2pt</PaddingRight>
-                          <PaddingTop>2pt</PaddingTop>
-                          <PaddingBottom>2pt</PaddingBottom>
-                        </Style>
-                      </Textbox>
-                    </CellContents>
-                  </TablixHeader>
                   <TablixMembers>
                     <TablixMember>
-                      <Group Name="SalesOrder">
-                        <GroupExpressions>
-                          <GroupExpression>=Fields!SalesOrder.Value</GroupExpression>
-                        </GroupExpressions>
-                      </Group>
-                      <SortExpressions>
-                        <SortExpression>
-                          <Value>=Fields!SalesOrder.Value</Value>
-                        </SortExpression>
-                      </SortExpressions>
                       <TablixHeader>
                         <Size>1in</Size>
                         <CellContents>
-                          <Textbox Name="SalesOrder">
+                          <Textbox Name="OrderDate">
                             <CanGrow>true</CanGrow>
                             <KeepTogether>true</KeepTogether>
                             <Paragraphs>
                               <Paragraph>
                                 <TextRuns>
                                   <TextRun>
-                                    <Value>=Fields!SalesOrder.Value</Value>
+                                    <Value>=Fields!OrderDate.Value</Value>
                                     <Style>
                                       <FontFamily>Arial</FontFamily>
+                                      <Format>MMMM d, yyyy</Format>
                                     </Style>
                                   </TextRun>
                                 </TextRuns>
                                 <Style />
                               </Paragraph>
                             </Paragraphs>
-                            <rd:DefaultName>SalesOrder</rd:DefaultName>
+                            <rd:DefaultName>OrderDate</rd:DefaultName>
                             <Style>
                               <Border>
                                 <Color>LightGrey</Color>
@@ -782,49 +792,96 @@ GROUP BY SOH.OrderDate, SOH.SalesOrderNumber, PP.Name, PPS.Name, SOD.OrderQty, S
                       </TablixHeader>
                       <TablixMembers>
                         <TablixMember>
-                          <Group Name="Details" />
+                          <Group Name="SalesOrder">
+                            <GroupExpressions>
+                              <GroupExpression>=Fields!SalesOrder.Value</GroupExpression>
+                            </GroupExpressions>
+                          </Group>
+                          <SortExpressions>
+                            <SortExpression>
+                              <Value>=Fields!SalesOrder.Value</Value>
+                            </SortExpression>
+                          </SortExpressions>
+                          <TablixHeader>
+                            <Size>1in</Size>
+                            <CellContents>
+                              <Textbox Name="SalesOrder">
+                                <CanGrow>true</CanGrow>
+                                <KeepTogether>true</KeepTogether>
+                                <Paragraphs>
+                                  <Paragraph>
+                                    <TextRuns>
+                                      <TextRun>
+                                        <Value>=Fields!SalesOrder.Value</Value>
+                                        <Style>
+                                          <FontFamily>Arial</FontFamily>
+                                        </Style>
+                                      </TextRun>
+                                    </TextRuns>
+                                    <Style />
+                                  </Paragraph>
+                                </Paragraphs>
+                                <rd:DefaultName>SalesOrder</rd:DefaultName>
+                                <Style>
+                                  <Border>
+                                    <Color>LightGrey</Color>
+                                    <Style>Solid</Style>
+                                  </Border>
+                                  <PaddingLeft>2pt</PaddingLeft>
+                                  <PaddingRight>2pt</PaddingRight>
+                                  <PaddingTop>2pt</PaddingTop>
+                                  <PaddingBottom>2pt</PaddingBottom>
+                                </Style>
+                              </Textbox>
+                            </CellContents>
+                          </TablixHeader>
+                          <TablixMembers>
+                            <TablixMember>
+                              <Group Name="Details" />
+                            </TablixMember>
+                            <TablixMember>
+                              <KeepWithGroup>Before</KeepWithGroup>
+                            </TablixMember>
+                          </TablixMembers>
                         </TablixMember>
                         <TablixMember>
+                          <TablixHeader>
+                            <Size>1in</Size>
+                            <CellContents>
+                              <Textbox Name="Textbox23">
+                                <CanGrow>true</CanGrow>
+                                <KeepTogether>true</KeepTogether>
+                                <Paragraphs>
+                                  <Paragraph>
+                                    <TextRuns>
+                                      <TextRun>
+                                        <Value>Daily Total :</Value>
+                                        <Style>
+                                          <FontFamily>Arial</FontFamily>
+                                        </Style>
+                                      </TextRun>
+                                    </TextRuns>
+                                    <Style />
+                                  </Paragraph>
+                                </Paragraphs>
+                                <rd:DefaultName>Textbox23</rd:DefaultName>
+                                <Style>
+                                  <Border>
+                                    <Color>LightGrey</Color>
+                                    <Style>Solid</Style>
+                                  </Border>
+                                  <BackgroundColor>Gold</BackgroundColor>
+                                  <PaddingLeft>2pt</PaddingLeft>
+                                  <PaddingRight>2pt</PaddingRight>
+                                  <PaddingTop>2pt</PaddingTop>
+                                  <PaddingBottom>2pt</PaddingBottom>
+                                </Style>
+                              </Textbox>
+                            </CellContents>
+                          </TablixHeader>
                           <KeepWithGroup>Before</KeepWithGroup>
                         </TablixMember>
                       </TablixMembers>
-                    </TablixMember>
-                    <TablixMember>
-                      <TablixHeader>
-                        <Size>1in</Size>
-                        <CellContents>
-                          <Textbox Name="Textbox23">
-                            <CanGrow>true</CanGrow>
-                            <KeepTogether>true</KeepTogether>
-                            <Paragraphs>
-                              <Paragraph>
-                                <TextRuns>
-                                  <TextRun>
-                                    <Value>Daily Total :</Value>
-                                    <Style>
-                                      <FontFamily>Arial</FontFamily>
-                                    </Style>
-                                  </TextRun>
-                                </TextRuns>
-                                <Style />
-                              </Paragraph>
-                            </Paragraphs>
-                            <rd:DefaultName>Textbox23</rd:DefaultName>
-                            <Style>
-                              <Border>
-                                <Color>LightGrey</Color>
-                                <Style>Solid</Style>
-                              </Border>
-                              <BackgroundColor>Gold</BackgroundColor>
-                              <PaddingLeft>2pt</PaddingLeft>
-                              <PaddingRight>2pt</PaddingRight>
-                              <PaddingTop>2pt</PaddingTop>
-                              <PaddingBottom>2pt</PaddingBottom>
-                            </Style>
-                          </Textbox>
-                        </CellContents>
-                      </TablixHeader>
-                      <KeepWithGroup>Before</KeepWithGroup>
                     </TablixMember>
                   </TablixMembers>
                 </TablixMember>
@@ -904,6 +961,15 @@ GROUP BY SOH.OrderDate, SOH.SalesOrderNumber, PP.Name, PPS.Name, SOD.OrderQty, S
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>DataSet1</DataSetName>
+            <Filters>
+              <Filter>
+                <FilterExpression>=Fields!Weekday.Value</FilterExpression>
+                <Operator>In</Operator>
+                <FilterValues>
+                  <FilterValue>=Parameters!DayOfTheWeek.Value</FilterValue>
+                </FilterValues>
+              </Filter>
+            </Filters>
             <Top>0.45708in</Top>
             <Height>1.25in</Height>
             <Width>5.51042in</Width>
@@ -932,7 +998,7 @@ GROUP BY SOH.OrderDate, SOH.SalesOrderNumber, PP.Name, PPS.Name, SOD.OrderQty, S
       <DataType>DateTime</DataType>
       <DefaultValue>
         <Values>
-          <Value>1/1/2010 12:00:00 AM</Value>
+          <Value>01/01/2010 00:00:00</Value>
         </Values>
       </DefaultValue>
       <Prompt>Start Date</Prompt>
@@ -941,10 +1007,46 @@ GROUP BY SOH.OrderDate, SOH.SalesOrderNumber, PP.Name, PPS.Name, SOD.OrderQty, S
       <DataType>DateTime</DataType>
       <DefaultValue>
         <Values>
-          <Value>12/31/2011 12:00:00 AM</Value>
+          <Value>12/31/2011 00:00:00</Value>
         </Values>
       </DefaultValue>
       <Prompt>End Date</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="DayOfTheWeek">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <DataSetReference>
+          <DataSetName>WeekDayDataSet</DataSetName>
+          <ValueField>WeekDayName</ValueField>
+        </DataSetReference>
+      </DefaultValue>
+      <Prompt>Day Of  the Week</Prompt>
+      <ValidValues>
+        <DataSetReference>
+          <DataSetName>WeekDayDataSet</DataSetName>
+          <ValueField>WeekDayName</ValueField>
+          <LabelField>WeekDayName</LabelField>
+        </DataSetReference>
+      </ValidValues>
+      <MultiValue>true</MultiValue>
+    </ReportParameter>
+    <ReportParameter Name="SalesPersonID">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <DataSetReference>
+          <DataSetName>BusinessPersonDataSet</DataSetName>
+          <ValueField>BusinessEntityID</ValueField>
+        </DataSetReference>
+      </DefaultValue>
+      <Prompt>Sales Bussiness Person ID</Prompt>
+      <ValidValues>
+        <DataSetReference>
+          <DataSetName>BusinessPersonDataSet</DataSetName>
+          <ValueField>BusinessEntityID</ValueField>
+          <LabelField>EmployeeName</LabelField>
+        </DataSetReference>
+      </ValidValues>
+      <MultiValue>true</MultiValue>
     </ReportParameter>
   </ReportParameters>
   <ReportParametersLayout>
@@ -961,6 +1063,16 @@ GROUP BY SOH.OrderDate, SOH.SalesOrderNumber, PP.Name, PPS.Name, SOD.OrderQty, S
           <ColumnIndex>1</ColumnIndex>
           <RowIndex>0</RowIndex>
           <ParameterName>EndDate</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>2</ColumnIndex>
+          <RowIndex>0</RowIndex>
+          <ParameterName>DayOfTheWeek</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>3</ColumnIndex>
+          <RowIndex>0</RowIndex>
+          <ParameterName>SalesPersonID</ParameterName>
         </CellDefinition>
       </CellDefinitions>
     </GridLayoutDefinition>

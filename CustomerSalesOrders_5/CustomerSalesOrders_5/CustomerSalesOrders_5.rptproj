@@ -52,7 +52,9 @@
     <DataSource Include="AdvantureWorkDataSource.rds" />
   </ItemGroup>
   <ItemGroup>
+    <Report Include="CascadingSalesOrder.rdl" />
     <Report Include="CustomerSalesOrders_Jan_2020.rdl" />
+    <Report Include="SalesOrderDetails.rdl" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Reporting Services\Microsoft.ReportingServices.MSBuilder.targets" />
 </Project>
