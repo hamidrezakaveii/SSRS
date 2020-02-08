@@ -88,6 +88,8 @@ UNION SELECT CAST('2020-12-31' AS date) AS SalesDate, CAST(81946. AS money) AS S
                         <Style>
                           <FontSize>9pt</FontSize>
                         </Style>
+                        <UseValueAsLabel>true</UseValueAsLabel>
+                        <Visible>true</Visible>
                       </ChartDataLabel>
                       <ToolTip>#VALY</ToolTip>
                       <Style />
@@ -128,6 +130,7 @@ UNION SELECT CAST('2020-12-31' AS date) AS SalesDate, CAST(81946. AS money) AS S
                         <Style>None</Style>
                       </Border>
                       <FontSize>8pt</FontSize>
+                      <Format>MMM d, yyyy</Format>
                       <Color>#5c5c5c</Color>
                     </Style>
                     <ChartAxisTitle>
@@ -170,8 +173,11 @@ UNION SELECT CAST('2020-12-31' AS date) AS SalesDate, CAST(81946. AS money) AS S
                       <Length>0.5</Length>
                     </ChartMinorTickMarks>
                     <CrossAt>NaN</CrossAt>
+                    <Scalar>true</Scalar>
                     <Minimum>NaN</Minimum>
                     <Maximum>NaN</Maximum>
+                    <Angle>-45</Angle>
+                    <LabelsAutoFitDisabled>true</LabelsAutoFitDisabled>
                     <ChartAxisScaleBreak>
                       <Style />
                     </ChartAxisScaleBreak>
@@ -241,7 +247,9 @@ UNION SELECT CAST('2020-12-31' AS date) AS SalesDate, CAST(81946. AS money) AS S
                         <Style>None</Style>
                       </Border>
                       <FontSize>8pt</FontSize>
+                      <Format>'$'#,0;('$'#,0)</Format>
                       <Color>#5c5c5c</Color>
+                      <rd:FormatSymbolCulture>en-US</rd:FormatSymbolCulture>
                     </Style>
                     <ChartAxisTitle>
                       <Caption />
@@ -344,6 +352,9 @@ UNION SELECT CAST('2020-12-31' AS date) AS SalesDate, CAST(81946. AS money) AS S
                     </ChartAxisScaleBreak>
                   </ChartAxis>
                 </ChartValueAxes>
+                <ChartThreeDProperties>
+                  <Enabled>true</Enabled>
+                </ChartThreeDProperties>
                 <Style>
                   <BackgroundColor>#00ffffff</BackgroundColor>
                   <BackgroundGradientType>None</BackgroundGradientType>
@@ -359,7 +370,6 @@ UNION SELECT CAST('2020-12-31' AS date) AS SalesDate, CAST(81946. AS money) AS S
                   <BackgroundGradientType>TopBottom</BackgroundGradientType>
                   <FontSize>8pt</FontSize>
                 </Style>
-                <Position>TopLeft</Position>
                 <ChartLegendTitle>
                   <Caption />
                   <Style>
@@ -404,9 +414,10 @@ UNION SELECT CAST('2020-12-31' AS date) AS SalesDate, CAST(81946. AS money) AS S
               </Style>
             </ChartNoDataMessage>
             <DataSetName>DataSet1</DataSetName>
-            <Top>0.5in</Top>
+            <Top>0.9375in</Top>
+            <Left>0.125in</Left>
             <Height>3.5in</Height>
-            <Width>5in</Width>
+            <Width>7.45833in</Width>
             <Style>
               <Border>
                 <Color>#5c5c5c</Color>
@@ -452,17 +463,17 @@ UNION SELECT CAST('2020-12-31' AS date) AS SalesDate, CAST(81946. AS money) AS S
             </Style>
           </Textbox>
         </ReportItems>
-        <Height>4in</Height>
+        <Height>4.4375in</Height>
         <Style>
           <Border>
             <Style>None</Style>
           </Border>
         </Style>
       </Body>
-      <Width>6in</Width>
+      <Width>7.9375in</Width>
       <Page>
         <PageFooter>
-          <Height>0.45in</Height>
+          <Height>1.46042in</Height>
           <PrintOnFirstPage>true</PrintOnFirstPage>
           <PrintOnLastPage>true</PrintOnLastPage>
           <ReportItems>
@@ -483,7 +494,7 @@ UNION SELECT CAST('2020-12-31' AS date) AS SalesDate, CAST(81946. AS money) AS S
                 </Paragraph>
               </Paragraphs>
               <rd:DefaultName>ExecutionTime</rd:DefaultName>
-              <Top>0.2in</Top>
+              <Top>1.21042in</Top>
               <Left>4in</Left>
               <Height>0.25in</Height>
               <Width>2in</Width>
